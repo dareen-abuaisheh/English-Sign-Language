@@ -1,0 +1,18 @@
+# This file lists the Python packages needed for the project.
+# Install them with:
+# pip install -r requirements.txt
+
+# Ultralytics provides YOLOv8.
+# It is used for training, validation, and prediction.
+ultralytics
+
+# OpenCV is used for reading images, showing images, and using the webcam.
+opencv-python
+
+# NumPy is used for basic numerical operations.
+# OpenCV and YOLO also work with NumPy arrays.
+numpy
+
+# Roboflow is optional, but useful if you want to download a dataset directly
+# from Roboflow using download_dataset.py.
+roboflow
