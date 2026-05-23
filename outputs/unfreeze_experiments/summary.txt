@@ -1,0 +1,7 @@
+Unfreeze YOLO Summary
+char-level: loss 1.0930->0.4765 (-0.6165), F1 0.3264->0.8665 (+0.5401), mAP50 0.1731->0.9218 (+0.7487)
+word-level: loss 0.9482->0.6351 (-0.3130), F1 0.4270->0.8137 (+0.3867), mAP50 0.3909->0.8979 (+0.5070)
+best word checkpoint: models/best_word_unfreeze_yolo.pt
+charts: outputs/unfreeze_experiments/charts
+
+Note: word-level run was manually stopped after collecting meaningful trend data.
