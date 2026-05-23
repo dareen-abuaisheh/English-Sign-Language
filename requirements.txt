@@ -13,6 +13,12 @@ opencv-python
 # OpenCV and YOLO also work with NumPy arrays.
 numpy
 
-# Roboflow is optional, but useful if you want to download a dataset directly
-# from Roboflow using download_dataset.py.
+# Roboflow is optional, but useful if you want to download datasets directly.
 roboflow
+
+# Pandas is used by run_experiments.py to read YOLO results.csv files
+# and create the final comparison table.
+pandas
+
+# Matplotlib is used by run_experiments.py to create comparison_plot.png.
+matplotlib

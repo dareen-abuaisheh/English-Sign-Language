@@ -1,15 +1,27 @@
 # Outputs Folder
 
-This folder stores generated project results.
+This folder stores generated results from both modules.
 
-Training outputs are saved in:
+Letter training outputs:
 
 ```text
-outputs/training_results/
+outputs/letter_training_results/
 ```
 
-Prediction outputs are saved in:
+Word training outputs:
 
 ```text
-outputs/results/
+outputs/word_training_results/
+```
+
+Letter prediction outputs:
+
+```text
+outputs/letter_predictions/
+```
+
+Word prediction outputs:
+
+```text
+outputs/word_predictions/
 ```

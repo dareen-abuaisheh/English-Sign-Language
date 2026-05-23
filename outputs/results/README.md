@@ -1,9 +1,12 @@
 # Results Folder
 
-This folder stores prediction results.
+This older folder can store general result files.
 
-For example, `predict.py` saves the displayed detection image as:
+The updated project uses clearer output folders:
 
 ```text
-outputs/results/prediction_result.jpg
+outputs/letter_predictions/
+outputs/word_predictions/
+outputs/letter_training_results/
+outputs/word_training_results/
 ```

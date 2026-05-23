@@ -1,17 +1,11 @@
 # Real-Time American Sign Language Detection using YOLOv8
 
-This is a simple and educational machine learning project for detecting American Sign Language (ASL) hand signs using YOLOv8.
+This project now contains two independent YOLOv8 modules:
 
-The project is designed for university students and beginners. The code uses a clear procedural style, simple functions, relative paths, and comments that explain the important steps.
+1. **Letter Detection Module**
+2. **Word Detection Module**
 
-## Project Idea
-
-The goal is to train a YOLOv8 object detection model to recognize ASL hand signs from a custom dataset.
-
-After training, the model can be used in two ways:
-
-1. Detect ASL signs in a single image.
-2. Detect ASL signs in real time using a webcam.
+The two modules are intentionally separate. Letter files use `letter` in their names, and word files use `word` in their names. This keeps the project simple, organized, and easier to explain in a university report.
 
 ## Technologies Used
 
@@ -19,189 +13,112 @@ After training, the model can be used in two ways:
 - YOLOv8 from Ultralytics
 - OpenCV
 - NumPy
-- Custom ASL dataset
+- Custom YOLO-format datasets
 
-## Why YOLOv8n?
+YOLOv8n is used by default because it is lightweight, fast, and suitable for student projects and limited GPU resources.
 
-This project uses `yolov8n.pt` by default.
-
-`YOLOv8n` means YOLOv8 nano. It is the smallest standard YOLOv8 model. It was chosen because it is lightweight, fast, and suitable for student projects, laptops, and limited GPU resources.
-
-Larger YOLO models may give better accuracy, but they usually need more training time, more GPU memory, and stronger hardware.
-
-## Project Pipeline
-
-1. Prepare the ASL dataset in YOLO format.
-2. Edit `dataset.yaml` if your class names are different.
-3. Install the required Python packages.
-4. Train the model using `train.py`.
-5. Copy the best trained model to `models/best.pt`.
-6. Test one image using `predict.py`.
-7. Run real-time webcam detection using `webcam_detection.py`.
-
-## Folder Structure
+## Project Structure
 
 ```text
-sign-language/
-├── dataset/
+project/
+├── letter_dataset/
 │   ├── train/
-│   │   ├── images/
-│   │   └── labels/
 │   ├── valid/
-│   │   ├── images/
-│   │   └── labels/
 │   └── test/
-│       ├── images/
-│       └── labels/
-├── inference/
+├── word_dataset/
+│   ├── train/
+│   ├── valid/
+│   └── test/
 ├── models/
+│   ├── letter_best.pt
+│   └── word_best.pt
+├── train_letter.py
+├── predict_letter.py
+├── webcam_letter_detection.py
+├── train_word.py
+├── predict_word.py
+├── webcam_word_detection.py
+├── letter_dataset.yaml
+├── word_dataset.yaml
 ├── outputs/
-│   └── results/
-├── training/
-├── utils/
-├── dataset.yaml
-├── predict.py
-├── README.md
-├── requirements.txt
-├── train.py
-└── webcam_detection.py
+└── README.md
 ```
 
-## What Each Main File Does
+## Letter Detection vs Word Detection
 
-### requirements.txt
+### Letter Detection
 
-Lists the Python packages needed for the project.
-
-Install with:
-
-```bash
-pip install -r requirements.txt
-```
-
-Expected output: Python downloads and installs `ultralytics`, `opencv-python`, and `numpy`.
-
-### dataset.yaml
-
-Tells YOLOv8 where the dataset is located and what classes exist.
-
-YOLOv8 uses it during training.
-
-### train.py
-
-Trains the YOLOv8n model on the ASL dataset.
-
-Run with:
-
-```bash
-python train.py
-```
-
-Expected output: training logs, validation metrics, weights, plots, and result files inside `outputs/training_results/`.
-
-### predict.py
-
-Runs detection on one image.
-
-Run with:
-
-```bash
-python predict.py --image inference/sample.jpg --model models/best.pt
-```
-
-Expected output: an OpenCV window showing detections and a saved image at `outputs/results/prediction_result.jpg`.
-
-### webcam_detection.py
-
-Runs real-time ASL detection using a webcam.
-
-Run with:
-
-```bash
-python webcam_detection.py --model models/best.pt
-```
-
-Expected output: a webcam window with bounding boxes, class names, and confidence scores. Press `q` to quit.
-
-## Dataset Organization
-
-YOLO object detection datasets use separate folders for images and labels.
-
-Use this structure:
+Letter detection recognizes individual ASL letters such as:
 
 ```text
-dataset/
-├── train/
-│   ├── images/
-│   └── labels/
-├── valid/
-│   ├── images/
-│   └── labels/
-└── test/
-    ├── images/
-    └── labels/
+A, B, C, D, ... Z
 ```
 
-### Where Images Go
-
-Training images go here:
-
-```text
-dataset/train/images/
-```
-
-Validation images go here:
-
-```text
-dataset/valid/images/
-```
-
-Test images go here:
-
-```text
-dataset/test/images/
-```
-
-### Where Annotation Files Go
-
-Training label files go here:
-
-```text
-dataset/train/labels/
-```
-
-Validation label files go here:
-
-```text
-dataset/valid/labels/
-```
-
-Test label files go here:
-
-```text
-dataset/test/labels/
-```
-
-### Image and Label Names Must Match
-
-Every image should have a matching `.txt` annotation file with the same name.
+Each letter is treated as a separate class.
 
 Example:
 
 ```text
-dataset/train/images/A_001.jpg
-dataset/train/labels/A_001.txt
+class 0 = A
+class 1 = B
+class 2 = C
 ```
 
-If the image is called `A_001.jpg`, the label file must be called `A_001.txt`.
+### Word Detection
 
-## YOLO Annotation Format
+Word detection recognizes complete ASL words or signs such as:
 
-Each object in an image is written as one line in the label file:
+```text
+hello, thank-you, no, water, please
+```
+
+Each word is treated as a separate class.
+
+Example:
+
+```text
+class 57 = hello
+class 71 = no
+class 93 = thank-you
+```
+
+Word detection is usually harder than letter detection because words may involve more complex hand shapes, positions, and sometimes motion.
+
+## YOLO Dataset Format
+
+Both modules use YOLO format.
+
+Each dataset has this structure:
+
+```text
+train/images
+train/labels
+valid/images
+valid/labels
+test/images
+test/labels
+```
+
+Images go inside `images/` folders.
+
+Annotation `.txt` files go inside `labels/` folders.
+
+Image and label names must match.
+
+Example:
+
+```text
+letter_dataset/train/images/A_001.jpg
+letter_dataset/train/labels/A_001.txt
+```
+
+YOLO annotation format:
 
 ```text
 class_id x_center y_center width height
 ```
+
+The coordinates are normalized, meaning values are between `0` and `1` instead of pixel values.
 
 Example:
 
@@ -209,402 +126,229 @@ Example:
 0 0.500 0.500 0.250 0.300
 ```
 
-This means:
-
-- `0`: class id, such as class `A`
-- `0.500`: x-coordinate of the center of the box
-- `0.500`: y-coordinate of the center of the box
-- `0.250`: width of the box
-- `0.300`: height of the box
-
-### Normalized Coordinates
-
-YOLO uses normalized coordinates. This means the values are between `0` and `1` instead of using raw pixels.
-
-For example, if the image width is 1000 pixels and the box center is at x = 500 pixels, then:
-
-```text
-500 / 1000 = 0.500
-```
-
-Normalized coordinates make the labels work even if images have different sizes.
-
-## dataset.yaml Explained
-
-The file contains:
-
-```yaml
-path: dataset
-train: train/images
-val: valid/images
-test: test/images
-names:
-  0: A
-  1: B
-```
-
-Meaning:
-
-- `path`: main dataset folder
-- `train`: training image folder inside `path`
-- `val`: validation image folder inside `path`
-- `test`: test image folder inside `path`
-- `names`: class names used by the model
-
-To add ASL classes, add them under `names` and make sure the class ids match your label files.
-
-Example:
-
-```yaml
-names:
-  0: A
-  1: B
-  2: C
-```
-
-If a label file starts with `2`, YOLO will treat that object as class `C`.
+This means class `0`, with a box centered in the image.
 
 ## Installation
 
-### 1. Create a Virtual Environment
-
-Windows:
-
-```bash
-python -m venv venv
-```
-
-macOS or Linux:
+Create and activate a virtual environment:
 
 ```bash
 python3 -m venv venv
-```
-
-### 2. Activate the Virtual Environment
-
-Windows:
-
-```bash
-venv\Scripts\activate
-```
-
-macOS or Linux:
-
-```bash
 source venv/bin/activate
 ```
 
-### 3. Install Requirements
+Install packages:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Verify Installation
+Check CUDA GPU support:
 
 ```bash
-python -c "import ultralytics, cv2, numpy; print('Installation works')"
+python3 -c "import torch; print(torch.cuda.is_available())"
 ```
 
-### 5. Check CUDA GPU Support
+If it prints `True`, training can use the GPU. If it prints `False`, training will use CPU and may be slower.
 
-Run:
+## Letter Detection Module
+
+### Train Letter Model
 
 ```bash
-python -c "import torch; print(torch.cuda.is_available())"
+python3 train_letter.py
 ```
 
-If it prints `True`, PyTorch can see your CUDA GPU.
+This uses:
 
-If it prints `False`, training will use the CPU. CPU training works, but it is slower.
+```text
+letter_dataset/
+letter_dataset.yaml
+```
 
-## Training
+Training results are saved in:
 
-Before training, place your dataset inside the `dataset/` folder using the required YOLO structure.
+```text
+outputs/letter_training_results/
+```
 
-Then run:
+After training, copy:
+
+```text
+outputs/letter_training_results/weights/best.pt
+```
+
+to:
+
+```text
+models/letter_best.pt
+```
+
+### Predict One Letter Image
 
 ```bash
-python train.py
+python3 predict_letter.py --image inference/sample.jpeg --model models/letter_best.pt
 ```
 
-The script does the following:
+Output is saved in:
 
-1. Checks for `dataset.yaml`.
-2. Checks that the dataset folders exist.
-3. Checks whether CUDA is available.
-4. Loads the pretrained `yolov8n.pt` model.
-5. Uses transfer learning to train on your ASL dataset.
-6. Saves results inside `outputs/training_results/`.
+```text
+outputs/letter_predictions/letter_prediction_result.jpg
+```
 
-### Transfer Learning Explained
+This script also displays the result using OpenCV.
 
-Transfer learning means starting from a model that already learned useful visual features from a large dataset.
+### Run Letter Webcam Detection
 
-Instead of training from zero, YOLOv8 starts with pretrained knowledge and then adapts to ASL hand signs. This usually trains faster and works better for student-sized datasets.
+```bash
+python3 webcam_letter_detection.py --model models/letter_best.pt
+```
+
+Press `q` to quit safely.
+
+## Word Detection Module
+
+### Train Word Model
+
+```bash
+python3 train_word.py
+```
+
+This uses:
+
+```text
+word_dataset/
+word_dataset.yaml
+```
+
+Training results are saved in:
+
+```text
+outputs/word_training_results/
+```
+
+After training, copy:
+
+```text
+outputs/word_training_results/weights/best.pt
+```
+
+to:
+
+```text
+models/word_best.pt
+```
+
+### Predict One Word Image
+
+```bash
+python3 predict_word.py --image inference/sample.jpeg --model models/word_best.pt
+```
+
+Output is saved in:
+
+```text
+outputs/word_predictions/word_prediction_result.jpg
+```
+
+Important: `predict_word.py` does not use `cv2.imshow()` because remote GPU servers often do not support display windows.
+
+### Run Word Webcam Detection
+
+```bash
+python3 webcam_word_detection.py --model models/word_best.pt
+```
+
+Press `q` to quit safely.
 
 ## Training Hyperparameters
 
-The main hyperparameters are explained directly inside `train.py` before each value is defined.
+Both training scripts explain each hyperparameter before using it.
 
-The project uses:
-
-```python
-epochs = 50
-batch = 8
-imgsz = 640
-lr0 = 0.01
-optimizer = "auto"
-patience = 10
-```
-
-Short summary:
+Main hyperparameters:
 
 - `epochs`: how many times the model sees the full dataset
 - `batch`: how many images are processed at once
 - `imgsz`: image size used during training
 - `lr0`: initial learning rate
 - `optimizer`: method used to update model weights
-- `patience`: early stopping wait time
+- `patience`: early stopping setting
 
-## Model Evaluation
+Increase epochs if the model is still improving.
 
-YOLOv8 prints and saves useful metrics after training.
+Decrease batch size if GPU memory is low.
 
-### Precision
+Increase image size if hand details are too small.
 
-Precision answers: when the model predicts a sign, how often is it correct?
-
-High precision means fewer false detections.
-
-### Recall
-
-Recall answers: out of all real signs, how many did the model find?
-
-High recall means the model misses fewer signs.
-
-### mAP
-
-mAP means mean Average Precision.
-
-It is a common object detection score. Higher mAP usually means better detection performance.
-
-### Loss
-
-Loss measures how wrong the model is during training.
-
-In general, loss should decrease over time. If loss stays high, the model may not be learning well.
-
-### Confusion Matrix
-
-A confusion matrix shows which classes the model predicts correctly and which classes it confuses.
-
-For example, if the model often predicts `M` when the real sign is `N`, the confusion matrix helps reveal that problem.
-
-### Overfitting
-
-Overfitting happens when the model performs very well on training images but poorly on validation images.
-
-This means the model memorized the training set instead of learning general patterns.
-
-### Underfitting
-
-Underfitting happens when the model performs poorly on both training and validation images.
-
-This means the model has not learned enough yet.
-
-## Image Prediction
-
-Place a test image inside the `inference/` folder, for example:
-
-```text
-inference/sample.jpg
-```
-
-Make sure your trained model is here:
-
-```text
-models/best.pt
-```
-
-Then run:
-
-```bash
-python predict.py --image inference/sample.jpg --model models/best.pt
-```
-
-The script will:
-
-1. Load the trained model.
-2. Read the image with OpenCV.
-3. Run YOLOv8 prediction.
-4. Draw bounding boxes and confidence scores.
-5. Show the result using `cv2.imshow()`.
-6. Save the result to `outputs/results/prediction_result.jpg`.
-
-## Real-Time Webcam Demo
-
-Make sure your trained model is here:
-
-```text
-models/best.pt
-```
-
-Run:
-
-```bash
-python webcam_detection.py --model models/best.pt
-```
-
-The script will:
-
-1. Open the webcam.
-2. Read video frames one by one.
-3. Run YOLOv8 inference on each frame.
-4. Draw bounding boxes and confidence scores.
-5. Display the result using `cv2.imshow()`.
-6. Quit safely when you press `q`.
-
-If your computer has more than one webcam, try:
-
-```bash
-python webcam_detection.py --model models/best.pt --camera 1
-```
+Decrease image size if training is too slow.
 
 ## Outputs
 
-YOLOv8 saves training files inside the folder set in `train.py`:
+Letter training outputs:
 
 ```text
-outputs/training_results/
+outputs/letter_training_results/
 ```
 
-Important files may include:
-
-- `weights/best.pt`: best trained model
-- `weights/last.pt`: model from the last epoch
-- `results.csv`: training metrics for each epoch
-- `results.png`: training graphs
-- `confusion_matrix.png`: confusion matrix
-- `labels.jpg`: dataset label overview
-- `train_batch*.jpg`: examples of training batches
-- `val_batch*.jpg`: examples of validation predictions
-
-For prediction, this project saves image results here:
+Word training outputs:
 
 ```text
-outputs/results/
+outputs/word_training_results/
 ```
 
-To use the trained model with `predict.py` or `webcam_detection.py`, copy:
+Letter prediction outputs:
 
 ```text
-outputs/training_results/weights/best.pt
+outputs/letter_predictions/
 ```
 
-into:
+Word prediction outputs:
 
 ```text
-models/best.pt
+outputs/word_predictions/
 ```
 
-## Fine-Tuning Guide
+YOLO may save:
 
-### 1. How to Improve Accuracy
+- `weights/best.pt`
+- `weights/last.pt`
+- `results.csv`
+- `results.png`
+- `confusion_matrix.png`
+- validation prediction images
 
-Use more high-quality labeled images. Good labels are very important for object detection.
+## Evaluation Metrics
 
-Try to include different people, hand sizes, camera angles, distances, lighting conditions, and backgrounds.
+YOLO reports common object detection metrics.
 
-### 2. How to Reduce Overfitting
+Precision means: when the model predicts a sign, how often is it correct?
 
-Add more validation images and more variety. If training accuracy is high but validation accuracy is low, the model may be memorizing.
+Recall means: out of all real signs, how many did the model find?
 
-You can reduce epochs, use more augmentation, or collect more data.
+mAP means mean Average Precision. Higher mAP usually means better detection.
 
-### 3. How to Train Faster
+Loss shows how wrong the model is during training. Loss should usually decrease.
 
-Use YOLOv8n, reduce `imgsz`, reduce `epochs`, or use a CUDA GPU.
-
-You can also increase `batch` if your GPU has enough memory.
-
-### 4. How to Choose Epochs
-
-Start with 50 epochs. If the model is still improving, try 75 or 100.
-
-If validation performance stops improving early, use fewer epochs or rely on `patience` for early stopping.
-
-### 5. How Batch Size Affects GPU Memory
-
-A larger batch processes more images at once, which can be faster on a good GPU.
-
-However, larger batches use more GPU memory. If you see an out-of-memory error, lower the batch size.
-
-### 6. When to Change Image Size
-
-Use a larger image size if hand signs are small or details are hard to see.
-
-Use a smaller image size if training is too slow or your GPU memory is limited.
-
-### 7. What to Do If Validation Loss Increases
-
-If validation loss increases while training loss decreases, the model may be overfitting.
-
-Try fewer epochs, more data, cleaner labels, or more varied images.
-
-### 8. What to Do If the Model Memorizes Training Data
-
-Add more varied images. Avoid having almost identical images in training and validation sets.
-
-Make sure the validation set contains people, backgrounds, and lighting conditions that are different from training.
-
-### 9. What Augmentation Helps Hand Gesture Datasets
-
-Helpful variety includes small rotations, brightness changes, contrast changes, slight scaling, and background variety.
-
-Avoid augmentations that make the hand sign incorrect or unrealistic.
-
-### 10. When to Use Smaller or Larger YOLO Models
-
-Use YOLOv8n when you need speed or have limited hardware.
-
-Try YOLOv8s or YOLOv8m if you have a stronger GPU and need better accuracy.
-
-### 11. How Lighting and Background Affect Predictions
-
-Poor lighting can hide finger shapes. Busy backgrounds can confuse the model.
-
-Collect images in different lighting conditions and backgrounds so the model learns to focus on the hand sign.
-
-### 12. Common Beginner Mistakes
-
-Common mistakes include:
-
-- image files without matching label files
-- label files with the wrong class id
-- incorrect folder names
-- using absolute paths that break on another computer
-- forgetting to update `dataset.yaml`
-- training with too few images
-- using validation images that are too similar to training images
-- expecting good webcam results from a very small dataset
+A confusion matrix shows which classes are confused with other classes.
 
 ## Future Improvements
 
-Possible improvements include:
+Possible future improvements:
 
-- training on more ASL signs
-- collecting more images from different people
-- testing larger YOLOv8 models
-- saving webcam recordings
-- adding a simple user interface
-- adding FPS display during webcam detection
-- improving predictions with better lighting and camera placement
+- collect more images from different people
+- improve lighting and background variety
+- train larger YOLO models if GPU resources allow
+- add a simple web interface
+- add FPS display for webcam detection
+- support sentence-level ASL recognition
+- use video-based models for signs that require motion
 
-## Limitations
+## Current Limitations
 
-This project detects visible ASL hand signs as object classes.
+The letter model detects individual letters only.
 
-It does not understand full ASL grammar, sentence meaning, motion over time, or two-handed sign sequences unless the dataset and model are designed for those cases.
+The word model detects word classes from images or frames, but it does not understand full ASL grammar.
 
-For best results, the dataset should be large, varied, and carefully labeled.
+Some ASL words may require motion, so a single-frame object detector may not fully understand every sign.
+
+The quality of results depends strongly on dataset size, label quality, lighting, camera position, and background variety.

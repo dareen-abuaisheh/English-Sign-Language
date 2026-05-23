@@ -1,0 +1,7 @@
+experiment_name,comparison_group,yolo_model,optimizer,image_size,epochs,final_precision,final_recall,final_map50,final_map50_95,final_train_box_loss,final_train_cls_loss,final_train_dfl_loss,final_val_box_loss,final_val_cls_loss,final_val_dfl_loss,training_time_seconds,inference_speed_ms,status,error_message
+model_yolov8n_640_auto,model comparison,yolov8n.pt,auto,640,5,0.56429,0.68718,0.68505,0.53654,0.80588,2.56185,1.26471,0.89358,1.53544,1.30659,80.49,1.9445,success,
+model_yolov8s_640_auto,model comparison,yolov8s.pt,auto,640,5,0.7665,0.87801,0.9233,0.75958,0.75345,1.34566,1.19772,0.78475,0.80892,1.19422,80.72,1.8925,success,
+image_size_416_yolov8n,image size comparison,yolov8n.pt,auto,416,5,0.49547,0.73207,0.6842,0.54719,0.83906,2.383,1.18701,0.84903,1.5414,1.13166,74.49,1.1626,success,
+image_size_640_yolov8n,image size comparison,yolov8n.pt,auto,640,5,0.56429,0.68718,0.68505,0.53654,0.80588,2.56185,1.26471,0.89358,1.53544,1.30659,79.44,0.8002,success,
+optimizer_sgd_yolov8n,optimizer comparison,yolov8n.pt,SGD,640,5,0.5441,0.63787,0.62848,0.4949,0.88205,2.81552,1.30806,0.87365,1.64443,1.28887,78.06,0.872,success,
+optimizer_adamw_yolov8n,optimizer comparison,yolov8n.pt,AdamW,640,5,0.26515,0.55632,0.33872,0.24599,1.16408,2.58297,1.48315,1.11854,2.16469,1.53892,79.75,0.8892,success,
