@@ -1,354 +1,298 @@
-# Real-Time American Sign Language Detection using YOLOv8
+# Real-Time American Sign Language Recognition using YOLOv8
 
-This project now contains two independent YOLOv8 modules:
+A real-time American Sign Language (ASL) recognition system built using **YOLOv8** for detecting both ASL alphabet letters and word-level gestures through webcam-based inference.
 
-1. **Letter Detection Module**
-2. **Word Detection Module**
+---
 
-The two modules are intentionally separate. Letter files use `letter` in their names, and word files use `word` in their names. This keeps the project simple, organized, and easier to explain in a university report.
+# Project Overview
 
-## Technologies Used
+This project uses deep learning and computer vision techniques to recognize ASL gestures in real time. The system was implemented using the **Ultralytics YOLOv8** framework and organized into two independent detection modules:
+
+- **Letter Detection Module** — detects ASL alphabet letters (A–Z)
+- **Word Detection Module** — detects ASL words and mixed gesture classes
+
+The system supports:
+- real-time webcam inference
+- object detection using bounding boxes
+- confidence score visualization
+- GPU-accelerated training and inference
+
+---
+
+# Features
+
+- Real-time ASL gesture recognition
+- YOLOv8 object detection pipeline
+- Letter-level and word-level detection
+- Webcam-based live inference
+- Transfer learning using pretrained YOLOv8 weights
+- CUDA GPU acceleration
+- Training visualization and evaluation plots
+- Confusion matrix analysis
+- Comparative analysis between models
+
+---
+
+# Technologies Used
 
 - Python
-- YOLOv8 from Ultralytics
+- Ultralytics YOLOv8
+- PyTorch
 - OpenCV
 - NumPy
-- Custom YOLO-format datasets
+- pandas
+- matplotlib
+- scikit-learn
 
-YOLOv8n is used by default because it is lightweight, fast, and suitable for student projects and limited GPU resources.
+---
 
-## Project Structure
+# Hardware
+
+Training and inference were performed using:
+
+- NVIDIA A100-SXM4-80GB GPU
+- CUDA acceleration
+
+---
+
+# Project Structure
 
 ```text
-project/
-├── letter_dataset/
+sign-language/
+│
+├── dataset/
 │   ├── train/
 │   ├── valid/
 │   └── test/
+│
 ├── word_dataset/
 │   ├── train/
 │   ├── valid/
 │   └── test/
+│
 ├── models/
 │   ├── letter_best.pt
 │   └── word_best.pt
-├── train_letter.py
-├── predict_letter.py
-├── webcam_letter_detection.py
-├── train_word.py
-├── predict_word.py
-├── webcam_word_detection.py
-├── letter_dataset.yaml
-├── word_dataset.yaml
+│
 ├── outputs/
+│   ├── letter_training_results/
+│   ├── word_training_results/
+│   └── report_plots/
+│
+├── comparison/
+│   ├── confusion_matrices/
+│   └── plots/
+│
+├── train_letter.py
+├── train_word.py
+├── predict.py
+├── webcam_detection.py
 └── README.md
 ```
 
-## Letter Detection vs Word Detection
+---
 
-### Letter Detection
+# Datasets
 
-Letter detection recognizes individual ASL letters such as:
+## Letter Dataset
 
-```text
-A, B, C, D, ... Z
-```
+| Property | Value |
+|---|---|
+| Classes | 26 |
+| Training Images | 1512 |
+| Validation Images | 144 |
+| Test Images | 72 |
 
-Each letter is treated as a separate class.
+---
 
-Example:
+## Mixed Letter + Word Dataset
 
-```text
-class 0 = A
-class 1 = B
-class 2 = C
-```
+| Property | Value |
+|---|---|
+| Classes | 106 |
+| Training Images | 20,706 |
+| Validation Images | 1,719 |
+| Test Images | 925 |
 
-### Word Detection
+---
 
-Word detection recognizes complete ASL words or signs such as:
+# YOLO Annotation Format
 
-```text
-hello, thank-you, no, water, please
-```
-
-Each word is treated as a separate class.
-
-Example:
-
-```text
-class 57 = hello
-class 71 = no
-class 93 = thank-you
-```
-
-Word detection is usually harder than letter detection because words may involve more complex hand shapes, positions, and sometimes motion.
-
-## YOLO Dataset Format
-
-Both modules use YOLO format.
-
-Each dataset has this structure:
-
-```text
-train/images
-train/labels
-valid/images
-valid/labels
-test/images
-test/labels
-```
-
-Images go inside `images/` folders.
-
-Annotation `.txt` files go inside `labels/` folders.
-
-Image and label names must match.
-
-Example:
-
-```text
-letter_dataset/train/images/A_001.jpg
-letter_dataset/train/labels/A_001.txt
-```
-
-YOLO annotation format:
+Each label file follows the YOLO format:
 
 ```text
 class_id x_center y_center width height
 ```
 
-The coordinates are normalized, meaning values are between `0` and `1` instead of pixel values.
+All coordinates are normalized relative to image dimensions.
 
-Example:
+---
 
-```text
-0 0.500 0.500 0.250 0.300
+# Model Performance
+
+## Letter Detection Model
+
+| Metric | Value |
+|---|---|
+| Precision | 0.94436 |
+| Recall | 0.88544 |
+| mAP50 | 0.95736 |
+| mAP50-95 | 0.77851 |
+
+---
+
+## Mixed Dataset Detection Model
+
+| Metric | Value |
+|---|---|
+| Precision | 0.96172 |
+| Recall | 0.96392 |
+| mAP50 | 0.97259 |
+| mAP50-95 | 0.73395 |
+
+---
+
+# How to Run
+
+## 1. Clone the Repository
+
+```bash
+git clone https://github.com/dareen-abuaisheh/English-Sign-Language.git
+cd English-Sign-Language
 ```
 
-This means class `0`, with a box centered in the image.
+---
 
-## Installation
+## 2. Create Virtual Environment
 
-Create and activate a virtual environment:
+### Linux / macOS
 
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 ```
 
-Install packages:
+### Windows
 
 ```bash
-pip install -r requirements.txt
+python -m venv venv
+venv\Scripts\activate
 ```
 
-Check CUDA GPU support:
+---
+
+## 3. Install Requirements
 
 ```bash
-python3 -c "import torch; print(torch.cuda.is_available())"
+pip install ultralytics opencv-python torch torchvision torchaudio numpy pandas matplotlib scikit-learn seaborn
 ```
 
-If it prints `True`, training can use the GPU. If it prints `False`, training will use CPU and may be slower.
+---
 
-## Letter Detection Module
+# Training
 
-### Train Letter Model
+## Train the Letter Detection Model
 
 ```bash
-python3 train_letter.py
+python train_letter.py
 ```
 
-This uses:
+---
 
-```text
-letter_dataset/
-letter_dataset.yaml
-```
-
-Training results are saved in:
-
-```text
-outputs/letter_training_results/
-```
-
-After training, copy:
-
-```text
-outputs/letter_training_results/weights/best.pt
-```
-
-to:
-
-```text
-models/letter_best.pt
-```
-
-### Predict One Letter Image
+## Train the Mixed Dataset / Word Detection Model
 
 ```bash
-python3 predict_letter.py --image inference/sample.jpeg --model models/letter_best.pt
+python train_word.py
 ```
 
-Output is saved in:
+---
 
-```text
-outputs/letter_predictions/letter_prediction_result.jpg
-```
+# Image Prediction
 
-This script also displays the result using OpenCV.
-
-### Run Letter Webcam Detection
+Run prediction on a single image:
 
 ```bash
-python3 webcam_letter_detection.py --model models/letter_best.pt
+python predict.py --image path/to/image.jpg --model models/letter_best.pt
 ```
 
-Press `q` to quit safely.
-
-## Word Detection Module
-
-### Train Word Model
+Example:
 
 ```bash
-python3 train_word.py
+python predict.py --image dataset/test/images/sample.jpg --model models/letter_best.pt
 ```
 
-This uses:
+---
 
-```text
-word_dataset/
-word_dataset.yaml
-```
+# Real-Time Webcam Detection
 
-Training results are saved in:
-
-```text
-outputs/word_training_results/
-```
-
-After training, copy:
-
-```text
-outputs/word_training_results/weights/best.pt
-```
-
-to:
-
-```text
-models/word_best.pt
-```
-
-### Predict One Word Image
+Run webcam inference:
 
 ```bash
-python3 predict_word.py --image inference/sample.jpeg --model models/word_best.pt
+python webcam_detection.py
 ```
 
-Output is saved in:
+The system will:
+- open the webcam
+- detect ASL gestures
+- display bounding boxes
+- show class labels and confidence scores
 
-```text
-outputs/word_predictions/word_prediction_result.jpg
-```
+---
 
-Important: `predict_word.py` does not use `cv2.imshow()` because remote GPU servers often do not support display windows.
+# Comparative Analysis
 
-### Run Word Webcam Detection
+The project includes a comparative analysis between:
+- Letter-Only Detection Model
+- Mixed Dataset Detection Model
 
-```bash
-python3 webcam_word_detection.py --model models/word_best.pt
-```
+The comparison evaluates:
+- classification complexity
+- prediction stability
+- gesture ambiguity
+- real-time usability
+- model generalization
 
-Press `q` to quit safely.
+---
 
-## Training Hyperparameters
+# Challenges and Limitations
 
-Both training scripts explain each hyperparameter before using it.
+- Lighting variability
+- Gesture similarity between classes
+- Background complexity
+- Webcam quality limitations
+- Lack of temporal modeling
+- Hardware dependency for real-time inference
 
-Main hyperparameters:
+---
 
-- `epochs`: how many times the model sees the full dataset
-- `batch`: how many images are processed at once
-- `imgsz`: image size used during training
-- `lr0`: initial learning rate
-- `optimizer`: method used to update model weights
-- `patience`: early stopping setting
+# Future Improvements
 
-Increase epochs if the model is still improving.
+- Sentence-level recognition
+- Temporal modeling using LSTM or Transformers
+- Mobile deployment
+- Text-to-speech integration
+- Larger and more diverse datasets
+- Enhanced real-time stability
 
-Decrease batch size if GPU memory is low.
+---
 
-Increase image size if hand details are too small.
+# Authors
 
-Decrease image size if training is too slow.
+- Dareen Abuaisheh
+- Hana Izzdeen
+- Mohammed Nabulsi
 
-## Outputs
+---
 
-Letter training outputs:
+# Course Information
 
-```text
-outputs/letter_training_results/
-```
+**Course:** Advanced Machine Learning  
+**Instructor:** Dr. Adnan Salman  
+**University:** An-Najah National University  
+**Date:** 23/5/2026
 
-Word training outputs:
+---
 
-```text
-outputs/word_training_results/
-```
+# License
 
-Letter prediction outputs:
-
-```text
-outputs/letter_predictions/
-```
-
-Word prediction outputs:
-
-```text
-outputs/word_predictions/
-```
-
-YOLO may save:
-
-- `weights/best.pt`
-- `weights/last.pt`
-- `results.csv`
-- `results.png`
-- `confusion_matrix.png`
-- validation prediction images
-
-## Evaluation Metrics
-
-YOLO reports common object detection metrics.
-
-Precision means: when the model predicts a sign, how often is it correct?
-
-Recall means: out of all real signs, how many did the model find?
-
-mAP means mean Average Precision. Higher mAP usually means better detection.
-
-Loss shows how wrong the model is during training. Loss should usually decrease.
-
-A confusion matrix shows which classes are confused with other classes.
-
-## Future Improvements
-
-Possible future improvements:
-
-- collect more images from different people
-- improve lighting and background variety
-- train larger YOLO models if GPU resources allow
-- add a simple web interface
-- add FPS display for webcam detection
-- support sentence-level ASL recognition
-- use video-based models for signs that require motion
-
-## Current Limitations
-
-The letter model detects individual letters only.
-
-The word model detects word classes from images or frames, but it does not understand full ASL grammar.
-
-Some ASL words may require motion, so a single-frame object detector may not fully understand every sign.
-
-The quality of results depends strongly on dataset size, label quality, lighting, camera position, and background variety.
+This project was developed for educational and academic purposes.
